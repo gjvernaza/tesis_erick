@@ -90,8 +90,8 @@ void setup()
     
     MOTOR1.setMaxSpeed(1500);
     MOTOR2.setMaxSpeed(1500);
-    MOTOR1.setSpeed(1000);
-    MOTOR2.setSpeed(1000);
+    MOTOR1.setSpeed(1500);
+    MOTOR2.setSpeed(1500);
     MOTOR1.setAcceleration(5000);
     MOTOR2.setAcceleration(5000);
 
@@ -115,9 +115,9 @@ void reset()
 
 void home()
 {
-    MOTOR1.setMaxSpeed(1000);
+    MOTOR1.setMaxSpeed(1500);
     MOTOR1.setAcceleration(5000);
-    MOTOR2.setMaxSpeed(1000);
+    MOTOR2.setMaxSpeed(1500);
     MOTOR2.setAcceleration(5000);
 
     servo_apert.write(0);
@@ -131,7 +131,7 @@ void home()
     while (digitalRead(homingM1))
     {
         MOTOR1.moveTo(initial_homing);
-        MOTOR1.setSpeed(-1000);
+        MOTOR1.setSpeed(-1500);
         initial_homing--;
         MOTOR1.run();
         delay(1);
@@ -142,20 +142,20 @@ void home()
     while (digitalRead(homingM2))
     {
         MOTOR2.moveTo(initial_homing);
-        MOTOR2.setSpeed(-1000);
+        MOTOR2.setSpeed(-1500);
         initial_homing--;
         MOTOR2.run();
         delay(1);
     }
 
-    long pos_cero_pieza_m1 = angle_F1 * (7600 / 360);
-    long pos_cero_pieza_m2 = angle_F2 * (10800 / 360);
+    long pos_cero_pieza_m1 = angle_F1 * (7600 / 360) + 300;
+    long pos_cero_pieza_m2 = angle_F2 * (10800 / 360) ;
     MOTOR1.setCurrentPosition(0);
     MOTOR2.setCurrentPosition(0);
     MOTOR1.moveTo(pos_cero_pieza_m1);
     MOTOR2.moveTo(pos_cero_pieza_m2);
-    MOTOR1.setSpeed(1000);
-    MOTOR2.setSpeed(1000);
+    MOTOR1.setSpeed(1500);
+    MOTOR2.setSpeed(1500);
     while (MOTOR1.currentPosition() < pos_cero_pieza_m1)
     {
         MOTOR1.run();
@@ -205,12 +205,12 @@ void loop()
     ////////// SI RECIBE DATOS DE FORMA MANUAL /////////////
     if (stringComplete_manual)
     {
-        MOTOR1.setMaxSpeed(1000);
+        MOTOR1.setMaxSpeed(1500);
         MOTOR1.setAcceleration(5000);
-        MOTOR2.setMaxSpeed(1000);
+        MOTOR2.setMaxSpeed(1500);
         MOTOR2.setAcceleration(5000);
-        MOTOR1.setSpeed(1000);
-        MOTOR2.setSpeed(1000);
+        MOTOR1.setSpeed(1500);
+        MOTOR2.setSpeed(1500);
         for (int i = 0; i < dataLength_manual; i++)
         {
             int index = inputString_manual.indexOf(separator);
@@ -224,37 +224,47 @@ void loop()
         pos2_step2 = datos_manual[3];
 
         long positions1[2];
-        positions1[0] = pos1_step1;
+        if(MOTOR1.currentPosition() > -50){
+            positions1[0] = pos1_step1 - 850;
+        }else{
+            positions1[0] = pos1_step1;
+        }
+        
         positions1[1] = pos1_step2;
+        // se mueve  a la posición 1
         steppers.moveTo(positions1);
-        steppers.runSpeedToPosition();
-        //servo_rot.write(40);
-        delay(800);
-        servo_apert.write(40);
+        steppers.runSpeedToPosition();                
+                
+        delay(1500);
+        // se abre el griper
+        servo_apert.write(50);
         // baja el actuador
-        delay(500);
+        delay(1500);
         digitalWrite(IN1, 0);
         digitalWrite(IN2, 1);
         delay(2500);
         //servo_rot.write(0);
-        servo_apert.write(20);
+        servo_apert.write(22);
         delay(1500);
         //sube el actuador
         digitalWrite(IN1, 1);
         digitalWrite(IN2, 0);
         delay(3000);
-        long positions2[2];
+
+        long positions2[2];        
         positions2[0] = pos2_step1;
         positions2[1] = pos2_step2;
+        // se mueve a la posición 2
         steppers.moveTo(positions2);
         steppers.runSpeedToPosition();
-        delay(800);
+
+        delay(1500);
         // baja el actuador        
         digitalWrite(IN1, 0);
         digitalWrite(IN2, 1);
-        delay(2500);
+        delay(2000);
         //suelta la pinza
-        servo_apert.write(40);
+        servo_apert.write(50);
         delay(1500);
         //sube el actuador
         digitalWrite(IN1, 1);
@@ -269,9 +279,9 @@ void loop()
     ////////// SI RECIBE DATOS DE FORMA AUTOMATICA /////////////
     if (stringComplete_auto == true && stringComplete_manual == false)
     {
-        MOTOR1.setMaxSpeed(1000);
+        MOTOR1.setMaxSpeed(1500);
         MOTOR1.setAcceleration(5000);
-        MOTOR2.setMaxSpeed(1000);
+        MOTOR2.setMaxSpeed(1500);
         MOTOR2.setAcceleration(5000);
         for (int i = 0; i < dataLength_auto; i++)
         {
@@ -295,19 +305,21 @@ void loop()
         long positions1_auto[2];
         positions1_auto[0] = pos1_step1_auto;
         positions1_auto[1] = pos1_step2_auto;
+        // se mueve a la posición 1
         steppers.moveTo(positions1_auto);
         steppers.runSpeedToPosition();
 
-        delay(800);
-        servo_apert.write(40);
+        delay(1000);
+        //se abre el griper
+        servo_apert.write(50);
         // baja el actuador
-        delay(500);
+        delay(1000);
         digitalWrite(IN1, 0);
         digitalWrite(IN2, 1);
         delay(2500);
-        // servo_rot.write(0);
-        servo_apert.write(20);
-        delay(1500);
+        // se cierra el griper para sujetar
+        servo_apert.write(22);
+        delay(2000);
         // sube el actuador
         digitalWrite(IN1, 1);
         digitalWrite(IN2, 0);
@@ -316,38 +328,44 @@ void loop()
         long positions2_auto[2];
         positions2_auto[0] = pos2_step1_auto;
         positions2_auto[1] = pos2_step2_auto;
+        // se mueve a la posición 3
         steppers.moveTo(positions2_auto);
         steppers.runSpeedToPosition();
 
-        delay(800);
+        delay(1000);
+        
         // baja el actuador
         digitalWrite(IN1, 0);
         digitalWrite(IN2, 1);
         delay(2500);
-        // suelta la pinza
-        servo_apert.write(40);
-        delay(1500);
+        // suelta el griper
+        servo_apert.write(50);
+        delay(2000);
         // sube el actuador
         digitalWrite(IN1, 1);
         digitalWrite(IN2, 0);
         delay(3500);
         servo_apert.write(0);
 
+        delay(2000);
+
         long positions3[2];
         positions3[0] = pos3_step1;
         positions3[1] = pos3_step2;
+        // se mueve a la posición 3
         steppers.moveTo(positions3);
         steppers.runSpeedToPosition();
 
-        delay(800);
-        servo_apert.write(40);
+        delay(2000);
+        // se abre el griper
+        servo_apert.write(50);
         // baja el actuador
-        delay(500);
+        delay(1500);
         digitalWrite(IN1, 0);
         digitalWrite(IN2, 1);
         delay(2500);
-        // servo_rot.write(0);
-        servo_apert.write(20);
+        // se cierra el griper para sujetar
+        servo_apert.write(22);
         delay(1500);
         // sube el actuador
         digitalWrite(IN1, 1);
@@ -357,21 +375,23 @@ void loop()
         long positions4[2];
         positions4[0] = pos4_step1;
         positions4[1] = pos4_step2;
+        // se mueve a la posición 4
         steppers.moveTo(positions4);
         steppers.runSpeedToPosition();
 
-        delay(800);
+        delay(1500);
         // baja el actuador
         digitalWrite(IN1, 0);
         digitalWrite(IN2, 1);
         delay(2500);
-        // suelta la pinza
-        servo_apert.write(40);
+        // suelta el griper
+        servo_apert.write(50);
         delay(1500);
         // sube el actuador
         digitalWrite(IN1, 1);
         digitalWrite(IN2, 0);
         delay(3500);
+        // se cierra el griper
         servo_apert.write(0);
 
         inputString_auto = "";

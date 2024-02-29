@@ -10,7 +10,7 @@ marker_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_1000)
 
 # detect the marker
 param_markers = aruco.DetectorParameters()
-num_camera = 3
+num_camera = 1
 cap = cv2.VideoCapture(num_camera)
 
 path = "procesamiento de imagenes/calibrate_camera"

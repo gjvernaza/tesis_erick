@@ -16,7 +16,7 @@ marker_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_1000)
 
 # detect the marker
 param_markers = aruco.DetectorParameters()
-num_camera = 3
+num_camera = 1
 cap = cv2.VideoCapture(num_camera)
 
 path = "procesamiento de imagenes/calibrate_camera"
@@ -51,12 +51,6 @@ def obtener_puertos_COM():
         
 
     return puertos_COM
-
-
-
-
-print(obtener_puertos_COM())
-
 
 
 
@@ -245,15 +239,15 @@ def main(page: page):
 
         print(f"Los centros son: {puntos_auto}")
 
-        clase_laser = puntos_auto[0][2]
+        clase = puntos_auto[0][2]
 
-        if clase_laser == "laser":
+        if clase == "laser":
 
             x1 = puntos_auto[0][0]
             y1 = puntos_auto[0][1]
             x3 = puntos_auto[1][0]
             y3 = puntos_auto[1][1]
-        else:
+        elif clase == "3d":
             x1 = puntos_auto[1][0]
             y1 = puntos_auto[1][1]
             x3 = puntos_auto[0][0]
@@ -371,7 +365,7 @@ def main(page: page):
     )
 
     button_reset = ft.ElevatedButton(
-        text="Reset",
+        text="Home",
         on_click=go_home
     )
 
@@ -543,9 +537,6 @@ def main(page: page):
                 ]
             )
         )
-
-
-
     )
 
 
