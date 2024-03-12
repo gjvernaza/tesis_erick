@@ -10,7 +10,7 @@ marker_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_1000)
 
 # detect the marker
 param_markers = aruco.DetectorParameters()
-num_camera = 1
+num_camera = 3
 cap = cv2.VideoCapture(num_camera)
 
 path = "procesamiento de imagenes/calibrate_camera"
@@ -77,7 +77,7 @@ class Camera(ft.UserControl):
         self.update_timer()
 
     def px_to_cm(self, w_px, h_px):
-        self.w_cm = (w_px*70/w) - 35
+        self.w_cm = (w_px*68/w) - 34
         self.h_cm = 35 - (h_px*35/h)
         return self.w_cm, self.h_cm
     

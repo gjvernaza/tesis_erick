@@ -32,6 +32,7 @@ const int IN2 = 14;
 long lastTime = 0;
 long initial_homing = 0;
 
+bool activado = true;
 
 AccelStepper MOTOR1(1, STEP_PIN_X, DIR_PIN_X); // 1; STEP ; DIR --  X
 AccelStepper MOTOR2(1, STEP_PIN_Z, DIR_PIN_Z); // 1; STEP ; DIR --  Z
@@ -68,7 +69,7 @@ const int dataLength_auto = 8;
 int datos_manual[dataLength_manual];
 int datos_auto[dataLength_auto];
 
-const int angle_F1 = 80; // original 65 para compensar le damos 75°
+const int angle_F1 = 50; // original 65 para compensar le damos 75°
 const int angle_F2 = 25; // original 50 para compensar le damos 70°
 
 void setup()
@@ -191,10 +192,10 @@ void serialEvent()
         }
         if (inChar == '\r')
         {
-            home();
+            //home();
             inChar = ' ';
             delay(500);
-            //reset();
+            reset();
         }
     }
 }
@@ -224,17 +225,14 @@ void loop()
         pos2_step2 = datos_manual[3];
 
         long positions1[2];
-        if(MOTOR1.currentPosition() > -50){
-            positions1[0] = pos1_step1 - 850;
-        }else{
-            positions1[0] = pos1_step1;
-        }
         
+        positions1[0] = pos1_step1;                
         positions1[1] = pos1_step2;
+
         // se mueve  a la posición 1
         steppers.moveTo(positions1);
-        steppers.runSpeedToPosition();                
-                
+        steppers.runSpeedToPosition(); 
+
         delay(1500);
         // se abre el griper
         servo_apert.write(50);
@@ -243,20 +241,23 @@ void loop()
         digitalWrite(IN1, 0);
         digitalWrite(IN2, 1);
         delay(2500);
-        //servo_rot.write(0);
+        // servo_rot.write(0);
         servo_apert.write(22);
         delay(1500);
-        //sube el actuador
+        // sube el actuador
         digitalWrite(IN1, 1);
         digitalWrite(IN2, 0);
         delay(3000);
-
+        
+        
+        
         long positions2[2];        
         positions2[0] = pos2_step1;
         positions2[1] = pos2_step2;
         // se mueve a la posición 2
         steppers.moveTo(positions2);
         steppers.runSpeedToPosition();
+        
 
         delay(1500);
         // baja el actuador        

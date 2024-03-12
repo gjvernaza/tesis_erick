@@ -7,7 +7,17 @@ marker_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_1000)
 
 # detect the marker
 param_markers = aruco.DetectorParameters()
-cap = cv2.VideoCapture(0)
+
+# Dirección IP de la cámara y puerto
+ip_address = '192.168.1.120'
+port = '4747'
+
+# URL de la transmisión de video de la cámara IP
+url = f'http://{ip_address}:{port}/video'
+
+# Captura de video desde la cámara IP
+cap = cv2.VideoCapture(url)
+#cap = cv2.VideoCapture(0)
 
 path = "procesamiento de imagenes/calibrate_camera"
 
@@ -59,7 +69,7 @@ max_area = 4000
 
 
 def px_to_cm(w_px, h_px):
-    w_cm = (w_px*70/w) - 35
+    w_cm = (w_px*68/w) - 34
     h_cm = 35 - (h_px*35/h)
 
     return w_cm, h_cm
